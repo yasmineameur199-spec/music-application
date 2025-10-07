@@ -9,6 +9,19 @@ You can create, update, delete, and fetch music tracks and artists.
 - Search for songs by artist
 - Authentication and admin access control
 - Organized with controllers, routes, and middlewares
+## Project Structure
+
+projet-musique/
+├── controllers/
+│ ├── music.controllers.js
+│ └── artiste.controllers.js
+├── routes/
+│ └── music.routes.js
+│ 
+├── middlewares/
+│ └── middlewares.js
+├── package.json
+└── server.js
 
 ## Installation
 
