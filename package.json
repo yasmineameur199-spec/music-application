@@ -1,0 +1,26 @@
+{
+  "name": "projet-musique",
+  "version": "1.0.0",
+  "description": "cree un une application de musique",
+  "main": "Express.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yasmineameur199-spec/music-application.git"
+  },
+  "keywords": [
+    "music"
+  ],
+  "author": "yasmine",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yasmineameur199-spec/music-application/issues"
+  },
+  "homepage": "https://github.com/yasmineameur199-spec/music-application#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
