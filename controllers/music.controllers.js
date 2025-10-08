@@ -9,6 +9,8 @@ export const createMusic = async (req, res) => {
         if (!artiste) {
             return res.status(404).json({ error: 'Artiste not found' });
         }
+
+        /// un test
         
         const newMusic = await Music.create({ titre, artisteId});
         res.status(201).json(newMusic);
