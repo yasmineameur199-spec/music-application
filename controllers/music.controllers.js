@@ -1,8 +1,16 @@
 import {Music} from "../models/music.model.js";
+import { Artiste } from "../models/artiste.model.js";
 export const createMusic = async (req, res) => {
     try {
-        const { titre} = req.body;
-        const newMusic = await Music.create({ titre});
+        const {artisteId} = req.body;
+        console.log(artisteId);
+        const {titre} = req.body;
+        const artiste = await Artiste.findByPk(artisteId);
+        if (!artiste) {
+            return res.status(404).json({ error: 'Artiste not found' });
+        }
+        
+        const newMusic = await Music.create({ titre, artisteId});
         res.status(201).json(newMusic);
     }   catch (error) {
         res.status(500).json({ error: 'Failed to create music' });
