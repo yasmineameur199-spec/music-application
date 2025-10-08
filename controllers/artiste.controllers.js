@@ -1,54 +1,71 @@
-const mediatheque =[
-  { "id": 1, "titre": "Blinding Lights", "artiste": "The Weeknd" },
-  { "id": 2, "titre": "Levitating", "artiste": "Dua Lipa" },
-  { "id": 3, "titre": "Shape of You", "artiste": "Ed Sheeran" },
-  { "id": 4, "titre": "Save Your Tears", "artiste": "The Weeknd" },
-  { "id": 5, "titre": "As It Was", "artiste": "Harry Styles" },
-  { "id": 6, "titre": "Dance Monkey", "artiste": "Tones and I" },
-  { "id": 7, "titre": "Flowers", "artiste": "Miley Cyrus" },
-  { "id": 8, "titre": "Stay", "artiste": "The Kid LAROI & Justin Bieber" },
-  { "id": 9, "titre": "Someone Like You", "artiste": "Adele" },
-  { "id": 10, "titre": "Bad Guy", "artiste": "Billie Eilish" }
-]
-function getByArtiste(requette, reponse) {
-    const artisteRequette = requette.params.artiste; 
-    const resultat = mediatheque.filter(
-        objet => objet.artiste === artisteRequette
-    );
+import { Artiste } from "../models/artiste.model.js";
 
-    if (resultat.length > 0) {
-        reponse.status(200).json(resultat);
-    } else {
-        reponse.status(404).json({ message: "artist not found" });
+
+export const createArtiste = async (req, res) => {
+    try {
+        const { nom } = req.body;
+        const newArtiste = await Artiste.create({ nom });
+        res.status(201).json(newArtiste);
+    }   catch (error) {
+        res.status(500).json({ error: 'Failed to create artiste' });
     }
-}
-
-function updateArtiste(requette, reponse) {
-    const idRequette = parseInt(requette.params.id);
-    const music = mediatheque.find(objet => objet.id === idRequette);
-
-    if (music) {
-        music.artiste = requette.body.artiste;
-        reponse.status(200).json(music);
-    } else {
-        reponse.status(404).json({ message: "artist not found" });
+};  
+export const getAllArtistes = async (req, res) => {
+    try {
+        const artistes = await Artiste.findAll();
+        res.status(200).json(artistes);
     }
-}
-function deleteArtiste(requette, reponse) {
-    const artisteRequette = requette.params.artiste;
-    const indexToRemove = mediatheque.findIndex(objet => objet.artiste === artisteRequette);
+    catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve artistes' });
+    }
 
-    if (indexToRemove !== -1) {
-        // Supprime toutes les musiques de cet artiste
-        for (let i = mediatheque.length - 1; i >= 0; i--) {
-            if (mediatheque[i].artiste === artisteRequette) {
-                mediatheque.splice(i, 1);
-            }
+};  
+
+export const getArtisteById = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const artiste = await Artiste.findByPk(id);
+        if (artiste) {
+            res.status(200).json(artiste);  
+        } else {
+            res.status(404).json({ error: 'Artiste not found' });
+        }   
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve artiste' });
+    }   
+};
+
+export const updateArtiste = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nom } = req.body;
+        const artiste = await Artiste.findByPk(id);
+        if (artiste) {
+            artiste.nom = nom;
+            await artiste.save();
+            res.status(200).json(artiste);
+        } else {
+            res.status(404).json({ error: 'Artiste not found' });
         }
-        reponse.status(204).end();
-    } else {
-        reponse.status(404).json({ message: "artist not found" });
-    }
-}
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update artiste' });
+    }   
+};  
+export const deleteArtiste = async (req, res) => {
+    try {
+        const { id } = req.params;  
+        const artiste = await Artiste.findByPk(id);
+        if (artiste) {
+            await artiste.destroy();
+            res.status(200).json({ message: 'Artiste deleted successfully' });
+        }
+        else {
+            res.status(404).json({ error: 'Artiste not found' });
+        }   
 
-export { getByArtiste, updateArtiste, deleteArtiste };
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete artiste' });
+    }   
+};  
+

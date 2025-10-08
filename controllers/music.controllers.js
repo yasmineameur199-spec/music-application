@@ -1,73 +1,68 @@
-
-
-const mediatheque =[
-  { "id": 1, "titre": "Blinding Lights", "artiste": "The Weeknd" },
-  { "id": 2, "titre": "Levitating", "artiste": "Dua Lipa" },
-  { "id": 3, "titre": "Shape of You", "artiste": "Ed Sheeran" },
-  { "id": 4, "titre": "Save Your Tears", "artiste": "The Weeknd" },
-  { "id": 5, "titre": "As It Was", "artiste": "Harry Styles" },
-  { "id": 6, "titre": "Dance Monkey", "artiste": "Tones and I" },
-  { "id": 7, "titre": "Flowers", "artiste": "Miley Cyrus" },
-  { "id": 8, "titre": "Stay", "artiste": "The Kid LAROI & Justin Bieber" },
-  { "id": 9, "titre": "Someone Like You", "artiste": "Adele" },
-  { "id": 10, "titre": "Bad Guy", "artiste": "Billie Eilish" }
-]
-function  createNewMusic(requette,reponse){
-    const titreMusic = requette.body.titre;
-    const artistMusic = requette.body.artiste;
-    let newId;
-    if (mediatheque.length===0){
-        newId=1;
-    }else{
-        newId= mediatheque[mediatheque.length-1].id+1;
-
+import {Music} from "../models/music.model.js";
+export const createMusic = async (req, res) => {
+    try {
+        const { titre} = req.body;
+        const newMusic = await Music.create({ titre});
+        res.status(201).json(newMusic);
+    }   catch (error) {
+        res.status(500).json({ error: 'Failed to create music' });
+    }   
+};
+export const getAllMusics = async (req, res) => {
+    try {
+        const musics = await Music.findAll();   
+        res.status(200).json(musics);
     }
-    const newMusic= {id: newId, titre:titreMusic, artiste: artistMusic}
-    mediatheque.push(newMusic);
-    reponse.status(201).json(newMusic);
-
-    
-}
-function getAllMusic(requette,reponse){
-    reponse.status(200).json(mediatheque)
-
-}
-function gettById(requette,reponse){
-    const idRequette= parseInt(requette.params.id)
-    const music = mediatheque.find(objet=> objet.id===idRequette);
-    if (music){
-         reponse.status(200).json(music);
-    }else{
-         reponse.status(404).json({ message: "music not found" });
+    catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve musics' });
     }
-}
-function updateMusic(requette,reponse){
-    const idRequette= parseInt(requette.params.id)
-    const music = mediatheque.find(objet=> objet.id===idRequette);
-    if (music){
-        music.titre=requette.body.titre;
-        music.artiste=requette.body.artiste;
-        reponse.status(200).json(music);
+};
 
-    }else{
-        reponse.status(404).json({message: 'music not found'});
+export const getMusicById = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const music = await Music.findByPk(id);
+        if (music) {
+            res.status(200).json(music);
+        } else {
+            res.status(404).json({ error: 'Music not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to retrieve music' });
     }
-
-}
-function deleteMusic(requette,reponse){
-    const idRequette= parseInt(requette.params.id)
-    const index = mediatheque.findIndex(objet=> objet.id===idRequette);
-    if (index !== -1){
-        mediatheque.splice(index,1);
-        reponse.status(204).end();
-    }else{
-        reponse.status(404).json({message: 'music not found'});
+};
+export const updateMusic = async (req, res) => {
+    try {
+        const { id } = req.params;  
+        const { titre } = req.body;
+        const music = await Music.findByPk(id);
+        if (music) {
+            music.titre = titre;
+            await music.save();
+            res.status(200).json(music);
+        } else {
+            res.status(404).json({ error: 'Music not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to update music' });
     }
-    
+};
+export const deleteMusic = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const music = await Music.findByPk(id);
+        if (music) {
+            await music.destroy();  
+            res.status(200).json({ message: 'Music deleted successfully' });
+        } else {
+            res.status(404).json({ error: 'Music not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ error: 'Failed to delete music' });
+    }
+};
 
 
-}
-export {createNewMusic, getAllMusic, gettById, updateMusic, deleteMusic};
 
 
 
